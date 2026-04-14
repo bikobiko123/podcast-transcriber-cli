@@ -32,3 +32,9 @@ Summary modes:
 - `agent`: always write a prompt for Codex or Claude Code to complete
 - `api`: require OpenAI-compatible API settings
 - `off`: transcript only
+
+## Agent Skill
+
+This repository includes a skill wrapper at `skills/podcast-transcriber/SKILL.md`.
+
+For Codex or Claude Code, copy or symlink that folder into your agent skills directory, then ask the agent to transcribe a podcast link. The skill will call `podcast-transcribe` and, when needed, fill the structured summary from the generated transcript.
