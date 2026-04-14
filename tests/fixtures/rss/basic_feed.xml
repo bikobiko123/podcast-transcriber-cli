@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0">
+  <channel>
+    <title>Demo Feed</title>
+    <item>
+      <title>Episode One</title>
+      <guid>ep-1</guid>
+      <link>https://example.com/episode-one</link>
+      <description>First episode.</description>
+      <pubDate>Tue, 14 Apr 2026 12:00:00 GMT</pubDate>
+      <enclosure url="https://media.example.com/episode-one.mp3" type="audio/mpeg" />
+    </item>
+  </channel>
+</rss>
