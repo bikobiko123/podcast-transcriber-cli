@@ -1,6 +1,6 @@
 ---
 name: podcast-transcriber
-description: Use when the user asks to transcribe or summarize a podcast episode from Xiaoyuzhou, RSS, Apple Podcasts, or a direct audio URL using the local podcast-transcribe CLI.
+description: Use when the user asks to transcribe or summarize a podcast episode from Xiaoyuzhou, an RSS feed, or a direct audio URL using the local podcast-transcribe CLI.
 ---
 
 # Podcast Transcriber
@@ -29,6 +29,8 @@ podcast-transcribe "<URL>" --summary api
 ## Defaults
 
 - Xiaoyuzhou public episode links are the preferred and strongest supported path.
+- RSS feed URLs and direct audio URLs are also supported.
+- Apple Podcasts pages are recognized but need the RSS feed URL or direct audio URL in v0.1.
 - Default Faster-Whisper model is `small`.
 - Transcript files are written to `transcripts/`.
 - Temporary audio files are written to `tmp/` and deleted after processing.

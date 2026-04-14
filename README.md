@@ -1,6 +1,6 @@
 # Podcast Transcriber CLI
 
-Local-first podcast transcription CLI with a Xiaoyuzhou-first resolver.
+Local-first podcast transcription CLI with a Xiaoyuzhou-first resolver, RSS feed support, and direct audio URL support.
 
 ## Quick Start
 
@@ -32,6 +32,13 @@ Summary modes:
 - `agent`: always write a prompt for Codex or Claude Code to complete
 - `api`: require OpenAI-compatible API settings
 - `off`: transcript only
+
+Supported inputs:
+
+- Xiaoyuzhou public episode links: strongest v0.1 path
+- RSS feed URLs: resolves the first audio enclosure in the feed
+- Direct audio URLs: `.mp3`, `.m4a`, `.wav`, `.aac`, `.ogg`, `.wma`, `.flac`
+- Apple Podcasts pages: recognized with a clear error; use the RSS feed URL or direct audio URL for now
 
 ## Agent Skill
 
