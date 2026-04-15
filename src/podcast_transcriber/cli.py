@@ -23,6 +23,7 @@ def main(
     output_dir: Path | None = typer.Option(None, "--output-dir"),
     tmp_dir: Path | None = typer.Option(None, "--tmp-dir"),
     model: str | None = typer.Option(None, "--model"),
+    beam_size: int = typer.Option(1, "--beam-size", min=1),
     language: str = typer.Option("auto", "--language"),
     summary: Literal["auto", "off", "agent", "api"] = typer.Option("auto", "--summary"),
 ) -> None:
@@ -47,7 +48,13 @@ def main(
             device=settings.whisper_device,
             compute_type=settings.whisper_compute_type,
         )
-        transcript = transcriber.transcribe(audio_path, language=language_arg)
+        progress = _ProgressPrinter()
+        transcript = transcriber.transcribe(
+            audio_path,
+            language=language_arg,
+            beam_size=beam_size,
+            progress_callback=progress,
+        )
 
         typer.echo("Preparing summary...")
         summary_markdown, summary_mode = summarize(
@@ -67,3 +74,21 @@ def main(
     finally:
         if audio_path is not None:
             cleanup_file(audio_path)
+
+
+class _ProgressPrinter:
+    def __init__(self) -> None:
+        self._last_percent = -1
+
+    def __call__(self, end_seconds: float, duration_seconds: float | None) -> None:
+        if not duration_seconds:
+            typer.echo(f"Transcribed through {end_seconds:.0f}s")
+            return
+
+        percent = min(100, int((end_seconds / duration_seconds) * 100))
+        if percent >= self._last_percent + 5 or percent == 100:
+            typer.echo(
+                f"Transcription progress: {percent}% "
+                f"({end_seconds:.0f}s/{duration_seconds:.0f}s)"
+            )
+            self._last_percent = percent

@@ -18,9 +18,17 @@ def test_cli_pipeline_writes_markdown_and_cleans_audio(
             assert device == "cpu"
             assert compute_type == "int8"
 
-        def transcribe(self, audio_path: Path, language: str | None) -> Transcript:
+        def transcribe(
+            self,
+            audio_path: Path,
+            language: str | None,
+            beam_size: int,
+            progress_callback,
+        ) -> Transcript:
             assert audio_path == audio
             assert language is None
+            assert beam_size == 1
+            progress_callback(3.0, 3.0)
             return Transcript(
                 text="hello transcript",
                 language="en",
@@ -61,6 +69,7 @@ def test_cli_pipeline_writes_markdown_and_cleans_audio(
     )
 
     assert result.exit_code == 0
+    assert "Transcription progress: 100%" in result.stdout
     assert "Done:" in result.stdout
     output = tmp_path / "transcripts" / "demo-episode.md"
     assert output.exists()

@@ -33,12 +33,23 @@ Summary modes:
 - `api`: require OpenAI-compatible API settings
 - `off`: transcript only
 
+Transcription progress is printed every 5%. The CLI defaults to `--beam-size 1`
+for practical CPU speed; raise it only when you want slower, more exhaustive
+decoding.
+
 Supported inputs:
 
 - Xiaoyuzhou public episode links: strongest v0.1 path
 - RSS feed URLs: resolves the first audio enclosure in the feed
 - Direct audio URLs: `.mp3`, `.m4a`, `.wav`, `.aac`, `.ogg`, `.wma`, `.flac`
 - Apple Podcasts pages: recognized with a clear error; use the RSS feed URL or direct audio URL for now
+
+If Hugging Face model downloads are unstable on your network, pre-cache the
+model through a mirror:
+
+```bash
+HF_ENDPOINT=https://hf-mirror.com .venv/bin/python -c "from huggingface_hub import snapshot_download; snapshot_download('Systran/faster-whisper-small', max_workers=1)"
+```
 
 ## Agent Skill
 

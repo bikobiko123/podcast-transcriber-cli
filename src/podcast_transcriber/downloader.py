@@ -19,6 +19,8 @@ def audio_filename_from_url(url: str, fallback: str = "audio.mp3") -> str:
 def download_audio(audio_url: str, tmp_dir: Path) -> Path:
     tmp_dir.mkdir(parents=True, exist_ok=True)
     output_path = tmp_dir / audio_filename_from_url(audio_url)
+    if output_path.exists() and output_path.stat().st_size > 0:
+        return output_path
 
     with httpx.stream("GET", audio_url, follow_redirects=True, timeout=None) as response:
         response.raise_for_status()
