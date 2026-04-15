@@ -43,7 +43,8 @@ podcast-transcribe "<URL>" --summary api
 - Default Faster-Whisper model is `small`.
 - Optional MLX backend is available with `--backend mlx` after installing `.[mlx]`.
 - MLX loads audio through PyAV, so it does not need a system `ffmpeg` binary.
-- Transcript files are written to `transcripts/`.
+- Transcript files are written to `/Users/bikodemac/Desktop/code-workspace/biko 仓库-真/00_收件箱/` by default.
+- If the output directory does not exist, ask before creating it.
 - Temporary audio files are written to `tmp/` and deleted after processing.
 
 ## Troubleshooting

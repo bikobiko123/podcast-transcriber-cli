@@ -37,6 +37,8 @@ def main(
     whisper_model = model or settings.whisper_model
     language_arg = None if language == "auto" else language
 
+    _ensure_output_dir(output_path)
+
     typer.echo("Resolving episode...")
     episode = resolve_episode(url)
     typer.echo(f"Resolved: {episode.title}")
@@ -87,6 +89,21 @@ def main(
     finally:
         if audio_path is not None:
             cleanup_file(audio_path)
+
+
+def _ensure_output_dir(output_path: Path) -> None:
+    if output_path.exists():
+        if not output_path.is_dir():
+            raise typer.BadParameter(f"Output path is not a directory: {output_path}")
+        return
+
+    should_create = typer.confirm(
+        f"Output directory does not exist: {output_path}. Create it?",
+        default=False,
+    )
+    if not should_create:
+        raise typer.Abort()
+    output_path.mkdir(parents=True, exist_ok=True)
 
 
 class _ProgressPrinter:

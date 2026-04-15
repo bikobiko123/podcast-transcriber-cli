@@ -3,6 +3,7 @@ from pathlib import Path
 from typer.testing import CliRunner
 
 from podcast_transcriber import cli
+from podcast_transcriber.config import Settings
 from podcast_transcriber.models import Episode, Transcript
 
 
@@ -10,6 +11,8 @@ def test_cli_pipeline_writes_markdown_and_cleans_audio(
     monkeypatch, tmp_path: Path
 ) -> None:
     audio = tmp_path / "tmp" / "episode.mp3"
+    output_dir = tmp_path / "transcripts"
+    output_dir.mkdir()
     cleaned: list[Path] = []
 
     class FakeTranscriber:
@@ -60,7 +63,7 @@ def test_cli_pipeline_writes_markdown_and_cleans_audio(
         [
             "https://www.xiaoyuzhoufm.com/episode/demo",
             "--output-dir",
-            str(tmp_path / "transcripts"),
+            str(output_dir),
             "--tmp-dir",
             str(tmp_path / "tmp"),
             "--summary",
@@ -71,7 +74,7 @@ def test_cli_pipeline_writes_markdown_and_cleans_audio(
     assert result.exit_code == 0
     assert "Transcription progress: 100%" in result.stdout
     assert "Done:" in result.stdout
-    output = tmp_path / "transcripts" / "demo-episode.md"
+    output = output_dir / "demo-episode.md"
     assert output.exists()
     assert "hello transcript" in output.read_text(encoding="utf-8")
     assert cleaned == [audio]
@@ -79,6 +82,8 @@ def test_cli_pipeline_writes_markdown_and_cleans_audio(
 
 def test_cli_can_select_mlx_backend(monkeypatch, tmp_path: Path) -> None:
     audio = tmp_path / "tmp" / "episode.mp3"
+    output_dir = tmp_path / "transcripts"
+    output_dir.mkdir()
     cleaned: list[Path] = []
 
     class FakeMlxTranscriber:
@@ -130,7 +135,7 @@ def test_cli_can_select_mlx_backend(monkeypatch, tmp_path: Path) -> None:
             "--language",
             "zh",
             "--output-dir",
-            str(tmp_path / "transcripts"),
+            str(output_dir),
             "--tmp-dir",
             str(tmp_path / "tmp"),
             "--summary",
@@ -140,7 +145,37 @@ def test_cli_can_select_mlx_backend(monkeypatch, tmp_path: Path) -> None:
 
     assert result.exit_code == 0
     assert "Transcribed through 3s" in result.stdout
-    output = tmp_path / "transcripts" / "mlx-episode.md"
+    output = output_dir / "mlx-episode.md"
     assert output.exists()
     assert 'backend: "mlx"' in output.read_text(encoding="utf-8")
     assert cleaned == [audio]
+
+
+def test_cli_asks_before_creating_missing_output_dir(monkeypatch, tmp_path: Path) -> None:
+    missing_output = tmp_path / "missing-inbox"
+    calls: list[str] = []
+
+    monkeypatch.setattr(
+        cli,
+        "load_settings",
+        lambda: Settings(
+            transcript_dir=str(missing_output),
+            tmp_dir=str(tmp_path / "tmp"),
+        ),
+    )
+    monkeypatch.setattr(
+        cli,
+        "resolve_episode",
+        lambda url: calls.append("resolve") or None,
+    )
+
+    result = CliRunner().invoke(
+        cli.app,
+        ["https://www.xiaoyuzhoufm.com/episode/demo"],
+        input="n\n",
+    )
+
+    assert result.exit_code != 0
+    assert str(missing_output) in result.stdout
+    assert not missing_output.exists()
+    assert calls == []

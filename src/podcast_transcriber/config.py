@@ -7,6 +7,9 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 
+DEFAULT_TRANSCRIPT_DIR = "/Users/bikodemac/Desktop/code-workspace/biko 仓库-真/00_收件箱"
+
+
 @dataclass(frozen=True)
 class Settings:
     openai_api_key: str | None = None
@@ -15,7 +18,7 @@ class Settings:
     whisper_model: str = "small"
     whisper_device: str = "cpu"
     whisper_compute_type: str = "int8"
-    transcript_dir: str = "transcripts"
+    transcript_dir: str = DEFAULT_TRANSCRIPT_DIR
     tmp_dir: str = "tmp"
 
 
@@ -32,6 +35,6 @@ def load_settings(env_path: Path | None = None) -> Settings:
         whisper_model=os.getenv("WHISPER_MODEL", "small"),
         whisper_device=os.getenv("WHISPER_DEVICE", "cpu"),
         whisper_compute_type=os.getenv("WHISPER_COMPUTE_TYPE", "int8"),
-        transcript_dir=os.getenv("TRANSCRIPT_DIR", "transcripts"),
+        transcript_dir=os.getenv("TRANSCRIPT_DIR", DEFAULT_TRANSCRIPT_DIR),
         tmp_dir=os.getenv("TMP_DIR", "tmp"),
     )

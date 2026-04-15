@@ -22,9 +22,12 @@ podcast-transcribe "https://www.xiaoyuzhoufm.com/episode/..." --summary agent
 Output:
 
 ```text
-transcripts/<episode-title>.md
+/Users/bikodemac/Desktop/code-workspace/biko 仓库-真/00_收件箱/<episode-title>.md
 tmp/<downloaded-audio>  # deleted after processing
 ```
+
+If the output directory does not exist, the CLI asks before creating it. Use
+`--output-dir` or `TRANSCRIPT_DIR` to override the default location.
 
 Summary modes:
 
