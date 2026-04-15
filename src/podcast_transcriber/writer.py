@@ -33,6 +33,7 @@ platform: "{episode.platform}"
 audio_url: "{episode.audio_url}"
 transcribed_at: "{transcribed_at}"
 whisper_model: "{transcript.model}"
+backend: "{transcript.backend}"
 language: "{transcript.language}"
 summary_mode: "{summary_mode}"
 ---

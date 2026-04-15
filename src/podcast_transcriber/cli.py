@@ -10,7 +10,7 @@ from podcast_transcriber.config import load_settings
 from podcast_transcriber.downloader import download_audio
 from podcast_transcriber.resolver import resolve_episode
 from podcast_transcriber.summarizer import summarize
-from podcast_transcriber.transcriber import FasterWhisperTranscriber
+from podcast_transcriber.transcriber import FasterWhisperTranscriber, MlxWhisperTranscriber
 from podcast_transcriber.writer import write_markdown
 
 
@@ -23,6 +23,10 @@ def main(
     output_dir: Path | None = typer.Option(None, "--output-dir"),
     tmp_dir: Path | None = typer.Option(None, "--tmp-dir"),
     model: str | None = typer.Option(None, "--model"),
+    backend: Literal["faster-whisper", "mlx"] = typer.Option(
+        "faster-whisper",
+        "--backend",
+    ),
     beam_size: int = typer.Option(1, "--beam-size", min=1),
     language: str = typer.Option("auto", "--language"),
     summary: Literal["auto", "off", "agent", "api"] = typer.Option("auto", "--summary"),
@@ -42,19 +46,28 @@ def main(
         typer.echo("Downloading audio...")
         audio_path = download_audio(episode.audio_url, tmp_path)
 
-        typer.echo(f"Transcribing with Faster-Whisper model={whisper_model}...")
-        transcriber = FasterWhisperTranscriber(
-            model=whisper_model,
-            device=settings.whisper_device,
-            compute_type=settings.whisper_compute_type,
-        )
         progress = _ProgressPrinter()
-        transcript = transcriber.transcribe(
-            audio_path,
-            language=language_arg,
-            beam_size=beam_size,
-            progress_callback=progress,
-        )
+        if backend == "mlx":
+            typer.echo(f"Transcribing with MLX Whisper model={whisper_model}...")
+            mlx_transcriber = MlxWhisperTranscriber(model=whisper_model)
+            transcript = mlx_transcriber.transcribe(
+                audio_path,
+                language=language_arg,
+                progress_callback=progress,
+            )
+        else:
+            typer.echo(f"Transcribing with Faster-Whisper model={whisper_model}...")
+            transcriber = FasterWhisperTranscriber(
+                model=whisper_model,
+                device=settings.whisper_device,
+                compute_type=settings.whisper_compute_type,
+            )
+            transcript = transcriber.transcribe(
+                audio_path,
+                language=language_arg,
+                beam_size=beam_size,
+                progress_callback=progress,
+            )
 
         typer.echo("Preparing summary...")
         summary_markdown, summary_mode = summarize(

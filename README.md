@@ -43,7 +43,33 @@ Speed tips:
 - Add `--language zh` for Chinese episodes to skip language detection.
 - Use `--model base` or `--model tiny` when speed matters more than accuracy.
 - Keep `--model small` for a better quality/speed balance on CPU.
-- On Apple Silicon, an MLX backend is the likely next major speed upgrade.
+- On Apple Silicon, install the optional MLX backend for faster local inference:
+
+```bash
+python -m pip install -e ".[mlx]"
+podcast-transcribe "https://www.xiaoyuzhoufm.com/episode/..." --backend mlx --language zh
+```
+
+The default backend is `faster-whisper` for cross-platform compatibility. MLX
+model names like `tiny`, `base`, `small`, `medium`, `large-v3`, and `turbo` map
+to `mlx-community/whisper-*-mlx` repositories. You can also pass a full
+`mlx-community/...` model repo or a local model path with `--model`. The CLI
+loads audio through PyAV before calling MLX, so it does not need a system
+`ffmpeg` binary for the MLX path.
+
+MLX troubleshooting:
+
+- `python -m pip install -e ".[mlx]"` follows the official `mlx-whisper`
+  dependency metadata, which may download large packages including `torch`.
+- For a smaller Apple Silicon setup, this project has also been verified with:
+
+```bash
+python -m pip install mlx-whisper==0.4.3 --no-deps
+python -m pip install "mlx>=0.11" numba scipy tiktoken more-itertools
+```
+
+- MLX needs Apple Metal access. If an agent shell sandbox crashes while importing
+  `mlx.core`, rerun the command in a local or escalated shell.
 
 Supported inputs:
 

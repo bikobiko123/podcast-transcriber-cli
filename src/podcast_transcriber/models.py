@@ -19,3 +19,4 @@ class Transcript:
     language: str
     duration_seconds: float | None
     model: str
+    backend: str = "faster-whisper"
