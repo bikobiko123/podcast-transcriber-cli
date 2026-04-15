@@ -33,9 +33,17 @@ Summary modes:
 - `api`: require OpenAI-compatible API settings
 - `off`: transcript only
 
-Transcription progress is printed every 5%. The CLI defaults to `--beam-size 1`
-for practical CPU speed; raise it only when you want slower, more exhaustive
-decoding.
+Transcription progress is printed every 5%. The CLI defaults to a CPU-friendly
+fast decode path: `--beam-size 1`, `best_of=1`, no temperature fallback, and no
+previous-text conditioning. Raise `--beam-size` only when you want slower, more
+exhaustive decoding.
+
+Speed tips:
+
+- Add `--language zh` for Chinese episodes to skip language detection.
+- Use `--model base` or `--model tiny` when speed matters more than accuracy.
+- Keep `--model small` for a better quality/speed balance on CPU.
+- On Apple Silicon, an MLX backend is the likely next major speed upgrade.
 
 Supported inputs:
 

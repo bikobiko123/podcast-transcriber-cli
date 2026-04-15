@@ -34,6 +34,8 @@ class FasterWhisperTranscriber:
             language=language,
             vad_filter=True,
             beam_size=beam_size,
+            best_of=1,
+            temperature=0.0,
             condition_on_previous_text=False,
         )
         duration = getattr(info, "duration", None)

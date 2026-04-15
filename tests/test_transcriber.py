@@ -43,5 +43,7 @@ def test_transcriber_collects_generator_text(tmp_path: Path) -> None:
     assert transcript.model == "small"
     assert model.kwargs["vad_filter"] is True
     assert model.kwargs["beam_size"] == 1
+    assert model.kwargs["best_of"] == 1
+    assert model.kwargs["temperature"] == 0.0
     assert model.kwargs["condition_on_previous_text"] is False
     assert progress == [(1.0, 2.0), (2.0, 2.0)]
