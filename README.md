@@ -93,3 +93,13 @@ HF_ENDPOINT=https://hf-mirror.com .venv/bin/python -c "from huggingface_hub impo
 This repository includes a skill wrapper at `skills/podcast-transcriber/SKILL.md`.
 
 For Codex or Claude Code, copy or symlink that folder into your agent skills directory, then ask the agent to transcribe a podcast link. The skill will call `podcast-transcribe` and, when needed, fill the structured summary from the generated transcript.
+
+## AI 与云端协作
+
+- 项目用途：播客解析、下载、转录与 Markdown 输出 CLI。
+- AI 工作入口：[AGENTS.md](AGENTS.md)。
+- 环境：Python >=3.11；python -m venv .venv；激活后 python -m pip install -e ".[dev]"。
+- 主要目录：src/podcast_transcriber/、tests/、skills/podcast-transcriber/、.env.example。
+- 验证边界：普通云端以 faster-whisper/CPU 为基础；MLX 需要 Apple Silicon/Metal。模型下载、真实音频和摘要 API 联调不能由离线单测替代。
+
+云端任务交付应包含修改说明、实际验证结果和剩余限制；个人本机改动未提交并推送前，云端无法读取。
